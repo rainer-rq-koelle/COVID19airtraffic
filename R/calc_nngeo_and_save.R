@@ -6,23 +6,22 @@
 #' The OSN data set for 2019 is about 7 mio flights without id for lat/lon.
 #' That runs for days ... 
 #'
-#' @param .sf_pts 
+#' @param .sf_pts sf dataframe of lat/lon
 #' @param .poly world polygons
 #' @param .prefix any code for the tmp folder
 #' @param .pth path to store temp files
-#' @param ... any other useful stuff
 #'
 #' @return
 #' @export
 #'
 #' @examples
-#' \donotrun{
-#'  calc_nngeo_and_save(add what you need)
+#' \dontrun{
+#'  calc_nngeo_and_save(sf_pts, world, "DEP)
 #'  }
 calc_nngeo_and_save<-function(.sf_pts, .poly, .prefix, .pth = pth, ...){
   # my variables
-  sf_pts <- .sf_ptsf
-  poly <- .poly
+  sf_pts <- .sf_pts
+  poly   <- .poly
   # kicking off nngeo
   df <- check_nngeo(sf_pts, poly)
   # saving out results

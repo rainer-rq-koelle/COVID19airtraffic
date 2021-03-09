@@ -21,5 +21,7 @@ country code derived from .poly added to input sf_pts object
 check and assign potential geographic country to lat/lon position
 }
 \examples{
-\dontrun{} check_nngeo(mysf, world)
+\dontrun{
+ check_nngeo(mysf, world)
+}
 }

@@ -25,5 +25,7 @@ recovering the lat/lon and dropping the geometry. This allows the tibble
 to be saved as fst (binary format).
 }
 \examples{
-\dontrun{} save_tmp(rq, .prefix = "DEP")
+\dontrun{
+ save_tmp(rq, .prefix = "DEP")
+ }
 }

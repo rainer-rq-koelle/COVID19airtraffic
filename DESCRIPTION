@@ -22,4 +22,6 @@ Imports:
     nngeo,
     sf,
     rnaturalearth,
-    rnaturalearthhires
+    rnaturalearthhires,
+    utils,
+    usethis

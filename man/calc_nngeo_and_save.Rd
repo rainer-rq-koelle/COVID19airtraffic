@@ -7,15 +7,13 @@
 calc_nngeo_and_save(.sf_pts, .poly, .prefix, .pth = pth, ...)
 }
 \arguments{
-\item{.sf_pts}{}
+\item{.sf_pts}{sf dataframe of lat/lon}
 
 \item{.poly}{world polygons}
 
 \item{.prefix}{any code for the tmp folder}
 
 \item{.pth}{path to store temp files}
-
-\item{...}{any other useful stuff}
 }
 \value{
 
@@ -26,7 +24,4 @@ iterating over large dataset. This is to reduce the risk of loosing the
 work, if things fail or are switched off :)
 The OSN data set for 2019 is about 7 mio flights without id for lat/lon.
 That runs for days ...
-}
-\examples{
-\donotrun{} calc_nngeo_and_save(add what you need)
 }
