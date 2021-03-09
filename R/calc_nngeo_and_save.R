@@ -16,7 +16,9 @@
 #' @export
 #'
 #' @examples
-#' \donotrun{} calc_nngeo_and_save(add what you need)
+#' \donotrun{
+#'  calc_nngeo_and_save(add what you need)
+#'  }
 calc_nngeo_and_save<-function(.sf_pts, .poly, .prefix, .pth = pth, ...){
   # my variables
   sf_pts <- .sf_ptsf
