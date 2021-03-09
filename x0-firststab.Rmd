@@ -1,0 +1,78 @@
+---
+title: "Global Air Traffic with Opensky Network"
+author: "RQ"
+date: "08/03/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r config, echo=FALSE, message=FALSE}
+library(tidyverse)
+
+# local data storage
+pth <- "../__DATA/OSN-COVID-ECTRL/"
+```
+
+
+## Overview
+
+This Rmarkdown report documents the data preparatory steps for cleaning the Opensky Network data.
+
+TODO
+
+* describe data and data issues
+
+## Data Ingestion
+
+Opensky Network publishes on a weekly basis records of their global data.
+These data is transferred as zipped csv files.
+Given the file size the data is read in and stored with {fst}.
+
+```{r}
+# document read zips and save out as fst
+```
+
+## Data Preparation
+
+```{r}
+ds <- fst::read_fst(path = paste0(pth, "OSN_2019_fst")) %>% tibble()
+ds_ok  <- ds %>% filter(!is.na(origin) & !is.na(destination))
+ds_dep <- ds %>% filter(!is.na(origin) &  is.na(destination))  # ADEP known
+ds_arr <- ds %>% filter( is.na(origin) & !is.na(destination))  # ADES known
+ds_nok <- ds %>% filter( is.na(origin) &  is.na(destination))  # both unknown
+```
+
+To match to geography we use rnaturalearth
+
+```{r}
+library(rnaturalearth)
+world <- ne_countries(scale = "medium", returnclass = "sf")
+world <- world %>% select(name, iso_a2)
+
+# load helper function to assign geo region
+source('~/RProjects/COVID-air-traffic/R/check_nngeo.R')
+```
+
+Dealing with departures in 2019
+
+```{r}
+pts_sf <- ds_dep %>% mutate(id = row_number()) %>%
+  select(id, icao24, latitude_2, longitude_2) 
+pts_sf_nope <- pts_sf %>% filter(is.na(latitude_2) | is.na(longitude_2))
+
+pts_sf <- pts_sf %>% filter(!id %in% pts_sf_nope$id) %>%
+  sf::st_as_sf(coords = c("longitude_2","latitude_2"), crs=4326)
+
+pts_sf[1:50000,] <- check_nngeo(pts_sf[1:50000,], world)
+```
+
+
+Working with the missing arrivals in 2019 as deps are crunched on home PC.
+
+```{r}
+
+```
+
+
