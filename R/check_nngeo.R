@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{} check_nngeo(mysf, world)
 check_nngeo <- function(.sf_pts, .poly, .maxdist = 100000, ...){
   # chatty function
   usethis::ui_info(paste0("crunching batch ", min(.sf_pts$id), "-", max(.sf_pts$id)))

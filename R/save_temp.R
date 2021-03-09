@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{} save_tmp(rq, .prefix = "DEP")
 save_tmp <- function(.ds, .prefix, .pth = pth){
   max_id <- max(.ds$id)
   my_pth <- paste0(.pth, "tmp/", .prefix,"_", max_id)

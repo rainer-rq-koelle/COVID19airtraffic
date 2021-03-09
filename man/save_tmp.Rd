@@ -24,3 +24,6 @@ The function also coerces the sf object to a normal data frame by
 recovering the lat/lon and dropping the geometry. This allows the tibble
 to be saved as fst (binary format).
 }
+\examples{
+\dontrun{} save_tmp(rq, .prefix = "DEP")
+}
