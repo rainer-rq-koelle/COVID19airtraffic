@@ -16,6 +16,11 @@ pth <- "../__DATA/OSN-COVID-ECTRL/"
 ```
 
 
+To cite this product:
+Flanders Marine Institute (2020). Union of the ESRI Country shapefile and the Exclusive Economic Zones (version 3). Available online at https://www.marineregions.org/. https://doi.org/10.14284/403
+ 
+ 
+
 ## Overview
 
 This Rmarkdown report documents the data preparatory steps for cleaning the Opensky Network data.
@@ -44,12 +49,15 @@ ds_arr <- ds %>% filter( is.na(origin) & !is.na(destination))  # ADES known
 ds_nok <- ds %>% filter( is.na(origin) &  is.na(destination))  # both unknown
 ```
 
-To match to geography we use rnaturalearth
+meta data / data description
+2019 nrow:= 30989481, missing ADEP 5126423
+
+For the first round of matching to geography we use rnaturalearth
 
 ```{r}
 library(rnaturalearth)
 world <- ne_countries(scale = "medium", returnclass = "sf")
-world <- world %>% select(name, iso_a2)
+world <- world %>% select(iso_a2)
 
 # load helper function to assign geo region
 source('~/RProjects/COVID-air-traffic/R/check_nngeo.R')
@@ -72,7 +80,93 @@ pts_sf[1:50000,] <- check_nngeo(pts_sf[1:50000,], world)
 Working with the missing arrivals in 2019 as deps are crunched on home PC.
 
 ```{r}
+# assign id for split-apply, if needed
+pts_sf <- ds_arr %>% mutate(id = row_number()) %>%
+  select(id, icao24, latitude_1, longitude_1) 
 
+# split sample that is.na for lat/lon and would through error
+pts_sf_nope <- pts_sf %>% 
+  filter(is.na(latitude_1) | is.na(longitude_1))
+
+# coerce lat/lon to sf for nearest neighbour calc
+pts_sf <- pts_sf %>% filter(!id %in% pts_sf_nope$id) %>%
+  sf::st_as_sf(coords = c("longitude_1","latitude_1"), crs=4326)
 ```
 
+source('~/RProjects/COVID19airtraffic/R/pts_latlon_to_sf.R')
+ds_dep_sf <- ds_dep %>% pts_latlon_to_sf(latitude_1, longitude_1)
+
+ds_dep_sf <- ds_dep_sf %>% sf::st_join(world)  # runs for about 5 mins
+# results in 645 814 NAs
+# ??? 1482305 when done on lat/lon_2! for missing destinations!
+
+EEZ_shps <-list.files("../__DATA/xWorld_EEZ_v11", pattern = ".shp$", full.names=TRUE)
+eez_sf <- sf::read_sf(EEZ_shps[2])
+eez_id_sf <- eez_sf %>% select(ISO_TER1)
+
+EEZ_land_shp <- list.files("../__DATA/xWorld_EEZ_and_land_v3", pattern = ".shp$", full.names=TRUE)
+eez_land <- sf::read_sf(EEZ_land_shp)
+eez_land <- eez_land %>% select(ISO_TER1)
+
+# readr::write_csv(ds_dep_sf, "x_deps_sf.csv") # think about this flattens geometry to string
+# convert sf to flat file before writing out - TODO
+rq <- readr::read_csv("x_deps_sf.csv")
+# -------------------- read in flat file with geometry column and clean!
+rq <- rq %>% 
+  tidyr::separate(geometry, c("lon","lat"), sep = ", ") %>% 
+  mutate(lon = stringr::str_remove(lon, "c\\(") %>% as.numeric()
+        ,lat = stringr::str_remove(lat, "\\)")  %>% as.numeric()
+        )
+# ------------------------------------------------ cleaning step, if needed
+
+rq <- ds_dep_sf %>% filter(is.na(iso_a2))
+
+rq <- rq %>% sf::st_join(eez_id_sf)     # runs for 2 mins!
+# results in still 381323 NAs
+# one could add a buffer to increast the zones but how do avoid overlaps?
+# running join over 5.1 mio runs for about 15 mins
+
+######### running st_join on all deps and then eez
+## ds %>% filter(is.na(ISO_TER1) & is.na(iso_a2))
+## Simple feature collection with 113684
+######### running st_join with eez and land zones
+#> ds %>% filter(is.na(ISO_TER1))
+# Simple feature collection with 99177 features and 7 fields
+
+# re-coerce to lat lon
+rq <- rq %>%
+     dplyr::mutate(lat = sf::st_coordinates(.)[,1],
+                   lon = sf::st_coordinates(.)[,2]
+                   )
+# dropping geometry:  df %>% sf::st_set_geometry(NULL)
+
+
+
+
+## check and delete what is no longer needed -----------------------------------
+
+test initially with small set before kicking off long iterator
+rq <- pts_sf[1:1000, ]
+
+split_df_by_groupsize <- function(.df, .group_size = 2500){
+  my_list <- .df %>%
+    dplyr::group_split(grp = (dplyr::row_number() - 1) %/% (.group_size))
+  return(my_list)
+}
+
+rq %>% split_df_by_groupsize(200) %>% 
+  purrr::walk(.f = calc_nngeo_and_save,.poly = world, .prefix = "ARR")_
+fst::read_fst("../__DATA/OSN-COVID-ECTRL/tmp/ARR_400")
+
+```{r}
+group_size <- 2500
+
+split_and_nngeo_arr <- . %>%
+  split_df_by_groupsize(.group_size = group_size) %>% 
+  purrr::walk(.f = calc_nngeo_and_save,.poly = world, .prefix = "ARR")
+
+pts_sf %>% split_and_nngeo_arr()
+```
+
+150001-152500
 

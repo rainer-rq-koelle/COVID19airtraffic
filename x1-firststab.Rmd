@@ -1,0 +1,152 @@
+---
+title: "Untitled"
+author: "RQ"
+date: "14/03/2021"
+output: pdf_document
+bibliography: COVID-air-traffic.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r, libs, message=FALSE}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+
+# own functions
+my_funs <- list.files(path = "./R/", pattern = "\\.R", full.names = TRUE)
+purrr::walk(my_funs, .f = source)
+
+# local data storage
+pth <- "../__DATA/OSN-COVID-ECTRL/"
+```
+
+## Overview
+
+This Rmarkdown report documents the data preparatory steps for cleaning the Opensky Network data.
+
+TODO
+
+* describe data and data issues
+
+## Data Ingestion
+
+Opensky Network publishes on a weekly basis records of their global data (@osn_covid_dataset, @schafer_osn_2014, @olive_traffic_2019) .
+These data is transferred as zipped csv files.
+Given the file size the data is read in and stored with {fst}.
+
+```{r}
+# document read zips and save out as fst
+```
+
+## Data Preparation
+
+```{r}
+ds <- fst::read_fst(path = paste0(pth, "OSN_2019_fst")) %>% tibble() 
+
+if(!file.exists("./data/meta.csv")){ 
+  meta <- list()   # initialise meta data file
+  meta$OSN_2019 <- meta_dataset_description(ds, 2019)
+}else{
+    meta <- readr::read_csv("./data/meta.csv")
+    next_meta <- meta_dataset_description(ds, 2019)
+    meta <- meta %>% left_join(next_meta)
+}
+meta <- meta %>% purrr::map_dfr(.f = bind_rows)
+readr::write_csv(x = meta, file="./data/meta.csv")
+```
+
+Geographic references for mapping of lat/lon positions to country and/or EEZ.
+Marineregions.org provides shapefile for EEZ and land boundaries (@EEZland_2020).
+Land country borders are taken from the {rnaturalearth} package.
+
+```{r}
+world <- ne_countries(scale = "medium", returnclass = "sf")
+world <- world %>% select(iso_a3)
+
+EEZ_land_shp <- list.files("../__DATA/xWorld_EEZ_and_land_v3", pattern = ".shp$", full.names=TRUE)
+eez_land <- sf::read_sf(EEZ_land_shp)
+eez_land <- eez_land %>% select(ISO_TER1)
+
+
+EEZ_12NM_shp <- list.files("../__DATA/xWorld_12NM_v3", pattern = ".shp$", full.names=TRUE)
+eez_12NM <- sf::read_sf(EEZ_12NM_shp)
+eez_12NM <- eez_land %>% select(ISO_TER1)
+```
+
+```{r}
+# assign unique key
+ds <- ds %>% mutate(id = row_number())
+
+# extract missing ADEPs and convert to sf pts
+rq <- ds %>% select(id, icao24, origin, destination,latitude_1, longitude_1) %>%
+  filter(is.na(origin)) %>% pts_latlon_to_sf(latitude_1, longitude_1, FALSE)
+# perform spational join with 12NM territory
+# runs for about 9 minutes
+rq <- rq %>% 
+  sf::st_join(eez_12NM)
+rq <- rq %>% rename(POS1_TW = ISO_TER1)
+# remove doubles ---------------------- check todo
+# another costly operation! about 10 mins
+rq <- rq %>% group_by(id) %>% slice(1) %>% ungroup()
+
+# TODO - CHECK FOR DOUBLE HITS
+# rq %>% group_by(id) %>% summarise(N = n()) %>% filter(N > 1)
+# resulted in 255 double hits!
+
+
+rq2 <- rq %>% filter(is.na(POS1_TW))
+rq2 <- rq2 %>%
+  sf::st_join(eez_land)
+# does not deliver any additional mapping, column left blank due to size!
+
+```
+
+rq %>% sf::st_set_geometry(NULL) %>% readr::write_csv("ds_origin_clean.csv")
+
+
+```{r}
+# load cleaner version of data
+rq <- readr::read_csv("ds_origin_clean.csv")
+
+ds <- ds %>% left_join(rq %>% select(id, POS1_TW), by = "id")
+```
+
+
+
+
+
+
+## Appendix
+
+### Shapefile borders
+
+Potential sources for water-land-zones boundaries
+
+* OpenStreetMap: https://osm-boundaries.com/Map; land & water 12NM
+* marineregions.org
+  + EEZ in various levels, e.g. 200NM
+  + EEZ plus land
+
+### Opensky Network Data Dictionary
+
+Description of the dataset
+
+One file per month is provided as a csv file with the following features:
+
+* callsign: the identifier of the flight displayed on ATC screens (usually the first three letters are reserved for an airline: AFR for Air France, DLH for Lufthansa, etc.)
+* number: the commercial number of the flight, when available (the matching with the callsign comes from public open API)
+* icao24: the transponder unique identification number;
+* registration: the aircraft tail number (when available);
+* typecode: the aircraft model type (when available);
+* origin: a four letter code for the origin airport of the flight (when available);
+* destination: a four letter code for the destination airport of the flight (when available);
+* firstseen: the UTC timestamp of the first message received by the OpenSky Network;
+* lastseen: the UTC timestamp of the last message received by the OpenSky Network;
+* day: the UTC day of the last message received by the OpenSky Network;
+* latitude_1, longitude_1, altitude_1: the first detected position of the aircraft;
+* latitude_2, longitude_2, altitude_2: the last detected position of the aircraft.
+
+
+## References
