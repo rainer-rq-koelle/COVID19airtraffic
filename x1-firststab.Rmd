@@ -43,14 +43,15 @@ Given the file size the data is read in and stored with {fst}.
 ## Data Preparation
 
 ```{r}
-ds <- fst::read_fst(path = paste0(pth, "OSN_2019_fst")) %>% tibble() 
+# ds <- fst::read_fst(path = paste0(pth, "OSN_2019_fst")) %>% tibble() 
+ds <- fst::read_fst(path = paste0(pth, "OSN_2020_fst")) %>% tibble() 
 
 if(!file.exists("./data/meta.csv")){ 
   meta <- list()   # initialise meta data file
   meta$OSN_2019 <- meta_dataset_description(ds, 2019)
 }else{
     meta <- readr::read_csv("./data/meta.csv")
-    next_meta <- meta_dataset_description(ds, 2019)
+    next_meta <- meta_dataset_description(ds, 2020)
     meta <- meta %>% left_join(next_meta)
 }
 meta <- meta %>% purrr::map_dfr(.f = bind_rows)
@@ -82,11 +83,14 @@ ds <- ds %>% mutate(id = row_number())
 # extract missing ADEPs and convert to sf pts
 rq <- ds %>% select(id, icao24, origin, destination,latitude_1, longitude_1) %>%
   filter(is.na(origin)) %>% pts_latlon_to_sf(latitude_1, longitude_1, FALSE)
+# rq 2020: 5,572,449
+
 # perform spational join with 12NM territory
 # runs for about 9 minutes
 rq <- rq %>% 
   sf::st_join(eez_12NM)
 rq <- rq %>% rename(POS1_TW = ISO_TER1)
+# 2020 nas 88,215 
 # remove doubles ---------------------- check todo
 # another costly operation! about 10 mins
 rq <- rq %>% group_by(id) %>% slice(1) %>% ungroup()
@@ -95,28 +99,61 @@ rq <- rq %>% group_by(id) %>% slice(1) %>% ungroup()
 # rq %>% group_by(id) %>% summarise(N = n()) %>% filter(N > 1)
 # resulted in 255 double hits!
 
-
-rq2 <- rq %>% filter(is.na(POS1_TW))
-rq2 <- rq2 %>%
-  sf::st_join(eez_land)
-# does not deliver any additional mapping, column left blank due to size!
-
+# 200NM EEZ did not deliver more results --------------------------------------
+# rq2 <- rq %>% filter(is.na(POS1_TW))
+# rq2 <- rq2 %>% sf::st_join(eez_land)
+# does not deliver any additional mapping, column left blank due to size! -----
 ```
-
+rq <- rq %>% sf::st_drop_geometry()
 rq %>% sf::st_set_geometry(NULL) %>% readr::write_csv("ds_origin_clean.csv")
 
 
 ```{r}
 # load cleaner version of data
-rq <- readr::read_csv("ds_origin_clean.csv")
+# rq <- readr::read_csv("ds_origin_clean.csv")
 
 ds <- ds %>% left_join(rq %>% select(id, POS1_TW), by = "id")
 ```
 
+tackle arrival side
+
+```{r}
+rq <- ds %>% select(id, icao24, origin, destination,latitude_2, longitude_2) %>%
+  filter(is.na(destination))
+# 2019 nas: 7214146
+# 2020 nas: 3,973,629
+rq_nope <- rq %>% filter(is.na(latitude_2) | is.na(longitude_2))
+# 2019 nopes 131
+# 2020 nopes 78
+
+rq <- rq %>% filter(! id %in% rq_nope$id) %>%
+  pts_latlon_to_sf(latitude_2, longitude_2, FALSE)
+
+# perform spational join with 12NM territory
+# runs for about 9 minutes
+# 2019 NAs 12NM 109,152
+# 2020          74,594
+# no additional hits for EEZ
+rq <- rq %>% 
+  sf::st_join(eez_12NM)
+# rename variable
+rq <- rq %>% rename(POS2_TW = ISO_TER1)
+## check for EEZ hits
+## rq <- rq %>% sf::st_join(eez_land)
+## rq %>% filter(is.na(POS2_TW) & !is.na(ISO_TER1))
 
 
+# when done drop geometry
+rq <- rq %>% sf::st_drop_geometry()
+```
 
+ds <- ds %>% left_join(rq %>% select(id, POS2_TW), by = "id")
+sf drop geometry
+ds <- ds %>% mutate(day = as.character(day)) 
+ds <- ds %>% mutate(lastseen = as.character(lastseen)) 
+ds <- ds %>% mutate(firstseen = as.character(firstseen)) 
 
+fst::write_fst(ds, path = paste0(pth, "OSN_2020_clean"))
 
 ## Appendix
 

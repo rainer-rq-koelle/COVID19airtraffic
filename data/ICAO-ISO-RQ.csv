@@ -1,0 +1,239 @@
+ICAO_REG,ICAO_REG_NAME,ICAO_CTRY,ICAO_CTRY_NAME,ISO_2,ISO_3
+A,Western South Pacific,AG,Solomon Islands,SB,SLB
+A,Western South Pacific,AN,Nauru,NR,NRU
+A,Western South Pacific,AY,Papua New Guinea,PG,PNG
+B,"Greenland, Iceland, and Kosovo (European Alternate)",BG,Greenland,GL,GRL
+B,"Greenland, Iceland, and Kosovo (European Alternate)",BI,Iceland,IS,ISL
+B,"Greenland, Iceland, and Kosovo (European Alternate)",BK,Kosovo,XK,XXK
+C,Canada,C,Canada,CA,CAN
+D,Eastern parts of West Africa and Maghreb,DA,Algeria,DZ,DZA
+D,Eastern parts of West Africa and Maghreb,DB,Benin,BJ,BEN
+D,Eastern parts of West Africa and Maghreb,DF,Burkina Faso,BF,BFA
+D,Eastern parts of West Africa and Maghreb,DG,Ghana,GH,GHA
+D,Eastern parts of West Africa and Maghreb,DI,Côte d'Ivoire,CI,CIV
+D,Eastern parts of West Africa and Maghreb,DN,Nigeria,NG,NGA
+D,Eastern parts of West Africa and Maghreb,DR,Niger,NE,NER
+D,Eastern parts of West Africa and Maghreb,DT,Tunisia,TN,TUN
+D,Eastern parts of West Africa and Maghreb,DX,Togolese Republic,TG,TGO
+E,Northern Europe,EB,Belgium,BE,BEL
+E,Northern Europe,ED,Germany (civil),DE,DEU
+E,Northern Europe,EE,Estonia,EE,EST
+E,Northern Europe,EF,Finland,FI,FIN
+E,Northern Europe,EG,United Kingdom (and Crown dependencies),GB,GBR
+E,Northern Europe,EH,Netherlands,NL,NLD
+E,Northern Europe,EI,Ireland,IE,IRL
+E,Northern Europe,EK,Denmark and the Faroe Islands,DK,DNK
+E,Northern Europe,EL,Luxembourg,LU,LUX
+E,Northern Europe,EN,Norway,NO,NOR
+E,Northern Europe,EP,Poland,PL,POL
+E,Northern Europe,ES,Sweden,SE,SWE
+E,Northern Europe,ET,Germany (military),DE,DEU
+E,Northern Europe,EV,Latvia,LV,LVA
+E,Northern Europe,EY,Lithuania,LT,LTU
+F,"Central Africa and Southern Africa, and the Indian Ocean",FA,South Africa,ZA,ZAF
+F,"Central Africa and Southern Africa, and the Indian Ocean",FB,Botswana,BW,BWA
+F,"Central Africa and Southern Africa, and the Indian Ocean",FC,Republic of the Congo,CG,COG
+F,"Central Africa and Southern Africa, and the Indian Ocean",FD,Eswatini,SZ,SWZ
+F,"Central Africa and Southern Africa, and the Indian Ocean",FE,Central African Republic,CF,CAF
+F,"Central Africa and Southern Africa, and the Indian Ocean",FG,Equatorial Guinea,GQ,GNQ
+F,"Central Africa and Southern Africa, and the Indian Ocean",FH,"Saint Helena, Ascension and Tristan da Cunha",SH,SHN
+F,"Central Africa and Southern Africa, and the Indian Ocean",FI,Mauritius,MU,MUS
+F,"Central Africa and Southern Africa, and the Indian Ocean",FJ,British Indian Ocean Territory,IO,IOT
+F,"Central Africa and Southern Africa, and the Indian Ocean",FK,Cameroon,CM,CMR
+F,"Central Africa and Southern Africa, and the Indian Ocean",FL,Zambia,ZM,ZMB
+F,"Central Africa and Southern Africa, and the Indian Ocean",FM,"Comoros, France (Mayotte and Réunion), and Madagascar (MG)",MG,MDG
+F,"Central Africa and Southern Africa, and the Indian Ocean",FN,Angola,AO,AGO
+F,"Central Africa and Southern Africa, and the Indian Ocean",FO,Gabon,GA,GAB
+F,"Central Africa and Southern Africa, and the Indian Ocean",FP,São Tomé and Príncipe,ST,STP
+F,"Central Africa and Southern Africa, and the Indian Ocean",FQ,Mozambique,MZ,MOZ
+F,"Central Africa and Southern Africa, and the Indian Ocean",FS,Seychelles,SC,SYC
+F,"Central Africa and Southern Africa, and the Indian Ocean",FT,Chad,TD,TCD
+F,"Central Africa and Southern Africa, and the Indian Ocean",FV,Zimbabwe,ZW,ZWE
+F,"Central Africa and Southern Africa, and the Indian Ocean",FW,Malawi,MW,MWI
+F,"Central Africa and Southern Africa, and the Indian Ocean",FX,Lesotho,LS,LSO
+F,"Central Africa and Southern Africa, and the Indian Ocean",FY,Namibia,"NA",NAM
+F,"Central Africa and Southern Africa, and the Indian Ocean",FZ,Democratic Republic of the Congo,CD,COD
+G,Western parts of West Africa and Maghreb,GA,Mali,ML,MLI
+G,Western parts of West Africa and Maghreb,GB,The Gambia,GM,GMB
+G,Western parts of West Africa and Maghreb,GC,Spain (Canary Islands),IC,NA
+G,Western parts of West Africa and Maghreb,GE,Spain (Ceuta and Melilla),EA,NA
+G,Western parts of West Africa and Maghreb,GF,Sierra Leone,SL,SLE
+G,Western parts of West Africa and Maghreb,GG,Guinea-Bissau,GW,GNB
+G,Western parts of West Africa and Maghreb,GL,Liberia,LR,LBR
+G,Western parts of West Africa and Maghreb,GM,Morocco,MA,MAR
+G,Western parts of West Africa and Maghreb,GO,Senegal,SN,SEN
+G,Western parts of West Africa and Maghreb,GQ,Mauritania,MR,MRT
+G,Western parts of West Africa and Maghreb,GS,Western Sahara,EH,ESH
+G,Western parts of West Africa and Maghreb,GU,Guinea,GN,GIN
+G,Western parts of West Africa and Maghreb,GV,Cape Verde,CV,CPV
+H,East Africa and Northeast Africa,HA,Ethiopia,ET,ETH
+H,East Africa and Northeast Africa,HB,Burundi,BI,BDI
+H,East Africa and Northeast Africa,HC,Somalia (including Somaliland),SO,SOM
+H,East Africa and Northeast Africa,HD,Djibouti,DJ,DJI
+H,East Africa and Northeast Africa,HE,Egypt,EG,EGY
+H,East Africa and Northeast Africa,HH,Eritrea,ER,ERI
+H,East Africa and Northeast Africa,HK,Kenya,KE,KEN
+H,East Africa and Northeast Africa,HL,Libya,LY,LBY
+H,East Africa and Northeast Africa,HR,Rwanda,RW,RWA
+H,East Africa and Northeast Africa,HS,Sudan (SD) and South Sudan (SS),SD,SDN
+H,East Africa and Northeast Africa,HT,Tanzania,TZ,TZA
+H,East Africa and Northeast Africa,HU,Uganda,UG,UGA
+K,Contiguous United States,K,Contiguous United States,US,USA
+L,"Southern Europe, Israel, Palestine and Turkey",LA,Albania,AL,ALB
+L,"Southern Europe, Israel, Palestine and Turkey",LB,Bulgaria,BG,BGR
+L,"Southern Europe, Israel, Palestine and Turkey",LC,Cyprus,CY,CYP
+L,"Southern Europe, Israel, Palestine and Turkey",LD,Croatia,HR,HRV
+L,"Southern Europe, Israel, Palestine and Turkey",LE,Spain (mainland section and Balearic Islands),ES,ESP
+L,"Southern Europe, Israel, Palestine and Turkey",LF,France (Metropolitan France; including Saint-Pierre and Miquelon),FR,FRA
+L,"Southern Europe, Israel, Palestine and Turkey",LG,Greece,GR,GRC
+L,"Southern Europe, Israel, Palestine and Turkey",LH,Hungary,HU,HUN
+L,"Southern Europe, Israel, Palestine and Turkey",LI,Italy,IT,ITA
+L,"Southern Europe, Israel, Palestine and Turkey",LJ,Slovenia,SI,SVN
+L,"Southern Europe, Israel, Palestine and Turkey",LK,Czech Republic,CZ,CZE
+L,"Southern Europe, Israel, Palestine and Turkey",LL,Israel,IL,ISR
+L,"Southern Europe, Israel, Palestine and Turkey",LM,Malta,MT,MLT
+L,"Southern Europe, Israel, Palestine and Turkey",LN,Monaco,MC,MCO
+L,"Southern Europe, Israel, Palestine and Turkey",LO,Austria,AT,AUT
+L,"Southern Europe, Israel, Palestine and Turkey",LP,Portugal (including the Azores and Madeira),PT,PRT
+L,"Southern Europe, Israel, Palestine and Turkey",LQ,Bosnia and Herzegovina,BA,BIH
+L,"Southern Europe, Israel, Palestine and Turkey",LR,Romania,RO,ROU
+L,"Southern Europe, Israel, Palestine and Turkey",LS,Switzerland,CH,CHE
+L,"Southern Europe, Israel, Palestine and Turkey",LT,Turkey,TR,TUR
+L,"Southern Europe, Israel, Palestine and Turkey",LU,Moldova,MD,MDA
+L,"Southern Europe, Israel, Palestine and Turkey",LV,Palestine/Palestinian territories,PS,PSE
+L,"Southern Europe, Israel, Palestine and Turkey",LW,North Macedonia,MK,MKD
+L,"Southern Europe, Israel, Palestine and Turkey",LX,Gibraltar,GI,GIB
+L,"Southern Europe, Israel, Palestine and Turkey",LY,Serbia and Montenegro,RS,SRB
+L,"Southern Europe, Israel, Palestine and Turkey",LZ,Slovakia,SK,SVK
+M,"Central America, Mexico and northern/western parts of the Caribbean",MB,Turks and Caicos Islands,TC,TCA
+M,"Central America, Mexico and northern/western parts of the Caribbean",MD,Dominican Republic,DO,DOM
+M,"Central America, Mexico and northern/western parts of the Caribbean",MG,Guatemala,GT,GTM
+M,"Central America, Mexico and northern/western parts of the Caribbean",MH,Honduras,HN,HND
+M,"Central America, Mexico and northern/western parts of the Caribbean",MK,Jamaica,JM,JAM
+M,"Central America, Mexico and northern/western parts of the Caribbean",MM,Mexico,MX,MEX
+M,"Central America, Mexico and northern/western parts of the Caribbean",MN,Nicaragua,NI,NIC
+M,"Central America, Mexico and northern/western parts of the Caribbean",MP,Panama,PA,PAN
+M,"Central America, Mexico and northern/western parts of the Caribbean",MR,Costa Rica,CR,CRI
+M,"Central America, Mexico and northern/western parts of the Caribbean",MS,El Salvador,SV,SLV
+M,"Central America, Mexico and northern/western parts of the Caribbean",MT,Haiti,HT,HTI
+M,"Central America, Mexico and northern/western parts of the Caribbean",MU,Cuba,CU,CUB
+M,"Central America, Mexico and northern/western parts of the Caribbean",MW,Cayman Islands,KY,CYM
+M,"Central America, Mexico and northern/western parts of the Caribbean",MY,Bahamas,BS,BHS
+M,"Central America, Mexico and northern/western parts of the Caribbean",MZ,Belize,BZ,BLZ
+N,South Pacific and New Zealand,NC,Cook Islands,CK,COK
+N,South Pacific and New Zealand,NF,"Fiji (iso: FJ), Tonga (iso: TO)",FJ,FJI
+N,South Pacific and New Zealand,NG,"Kiribati (Gilbert Islands) (iso: KI), Tuvalu (iso: TV)",KI,KIR
+N,South Pacific and New Zealand,NI,Niue,NU,NIU
+N,South Pacific and New Zealand,NL,France (Wallis and Futuna),WF,WLF
+N,South Pacific and New Zealand,NS,"Samoa, United States (American Samoa)",WS,WSM
+N,South Pacific and New Zealand,NT,France (French Polynesia),PF,PYF
+N,South Pacific and New Zealand,NV,Vanuatu,VU,VUT
+N,South Pacific and New Zealand,NW,France (New Caledonia),NC,NCL
+N,South Pacific and New Zealand,NZ,"New Zealand, parts of Antarctica",NZ,NZL
+O,"Pakistan, Afghanistan and most of Middle East",OA,Afghanistan,AF,AFG
+O,"Pakistan, Afghanistan and most of Middle East",OB,Bahrain,BH,BHR
+O,"Pakistan, Afghanistan and most of Middle East",OE,Saudi Arabia,SA,SAU
+O,"Pakistan, Afghanistan and most of Middle East",OI,Iran,IR,IRN
+O,"Pakistan, Afghanistan and most of Middle East",OJ,Jordan and the West Bank,JO,JOR
+O,"Pakistan, Afghanistan and most of Middle East",OK,Kuwait,KW,KWT
+O,"Pakistan, Afghanistan and most of Middle East",OL,Lebanon,LB,LBN
+O,"Pakistan, Afghanistan and most of Middle East",OM,United Arab Emirates,AE,ARE
+O,"Pakistan, Afghanistan and most of Middle East",OO,Oman,OM,OMN
+O,"Pakistan, Afghanistan and most of Middle East",OP,Pakistan,PK,PAK
+O,"Pakistan, Afghanistan and most of Middle East",OR,Iraq,IQ,IRQ
+O,"Pakistan, Afghanistan and most of Middle East",OS,Syria,SY,SYR
+O,"Pakistan, Afghanistan and most of Middle East",OT,Qatar,QA,QAT
+O,"Pakistan, Afghanistan and most of Middle East",OY,Yemen,YE,YEM
+P,(Former) U.S. North Pacific Territories and Kiribati,PA,"US (Alaska) (also PF, PO and PP)",US,USA
+P,(Former) U.S. North Pacific Territories and Kiribati,PB,US (Baker Island),UM,UMI
+P,(Former) U.S. North Pacific Territories and Kiribati,PC,"Kiribati (Canton Airfield, Phoenix Islands)",KI,KIR
+P,(Former) U.S. North Pacific Territories and Kiribati,PF,"US (Alaska) (also PA, PO and PP)",US,USA
+P,(Former) U.S. North Pacific Territories and Kiribati,PG,"US (Guam, Northern Mariana Islands)",GU,GUM
+P,(Former) U.S. North Pacific Territories and Kiribati,PH,US (Hawaii),US,USA
+P,(Former) U.S. North Pacific Territories and Kiribati,PJ,US (Johnston Atoll),UM,UMI
+P,(Former) U.S. North Pacific Territories and Kiribati,PK,Marshall Islands,MH,MHL
+P,(Former) U.S. North Pacific Territories and Kiribati,PL,Kiribati (Line Islands),KI,KIR
+P,(Former) U.S. North Pacific Territories and Kiribati,PM,US (Midway Island),UM,UMI
+P,(Former) U.S. North Pacific Territories and Kiribati,PO,"US (Alaska) (also PA, PF and PP)",US,USA
+P,(Former) U.S. North Pacific Territories and Kiribati,PP,"US (Alaska) (also PA, PF and PO)",US,USA
+P,(Former) U.S. North Pacific Territories and Kiribati,PT,"Federated States of Micronesia (iso: FM), Palau (iso: PW)",FM,FSM
+P,(Former) U.S. North Pacific Territories and Kiribati,PW,US (Wake Island),UM,UMI
+R,North Western Pacific (Taiwan/South Korea/Philippines and Japan),RC,Republic of China (Taiwan),TW,TWN
+R,North Western Pacific (Taiwan/South Korea/Philippines and Japan),RJ,Japan (Mainland),JP,JPN
+R,North Western Pacific (Taiwan/South Korea/Philippines and Japan),RK,Republic of Korea (South Korea),KR,KOR
+R,North Western Pacific (Taiwan/South Korea/Philippines and Japan),RO,Japan (Okinawa),JP,JPN
+R,North Western Pacific (Taiwan/South Korea/Philippines and Japan),RP,Philippines,PH,PHL
+S,South America,SA,Argentina (including parts of Antarctica),AR,ARG
+S,South America,SB,"Brazil (also SD, SI, SJ, SN, SS and SW)",BR,BRA
+S,South America,SC,Chile (including Easter Island and parts of Antarctica) (also SH),CL,CHL
+S,South America,SD,"Brazil (also SB, SI, SJ, SN, SS and SW)",BR,BRA
+S,South America,SE,Ecuador,EC,ECU
+S,South America,SF,United Kingdom (Falkland Islands),FK,FLK
+S,South America,SG,Paraguay,PY,PRY
+S,South America,SH,Chile (also SC),CL,CHL
+S,South America,SI,"Brazil (also SB, SD, SJ, SN, SS and SW)",BR,BRA
+S,South America,SJ,"Brazil (also SB, SD, SI, SN, SS and SW)",BR,BRA
+S,South America,SK,Colombia,CO,COL
+S,South America,SL,Bolivia,BO,BOL
+S,South America,SM,Suriname,SR,SUR
+S,South America,SN,"Brazil (also SB, SD, SI, SJ, SS and SW)",BR,BRA
+S,South America,SO,France (French Guiana),GF,GUF
+S,South America,SP,Peru,PE,PER
+S,South America,SS,"Brazil (also SB, SD, SI, SJ, SN and SW)",BR,BRA
+S,South America,SU,Uruguay,UY,URY
+S,South America,SV,Venezuela,VE,VEN
+S,South America,SW,"Brazil (also SB, SD, SI, SJ, SN and SS)",BR,BRA
+S,South America,SY,Guyana,GY,GUY
+T,Eastern and southern parts of the Caribbean,TA,Antigua and Barbuda,AG,ATG
+T,Eastern and southern parts of the Caribbean,TB,Barbados,BB,BRB
+T,Eastern and southern parts of the Caribbean,TD,Dominica,DM,DMA
+T,Eastern and southern parts of the Caribbean,TF,"France (Guadeloupe iso GP, Martinique iso MQ, Saint Barthélemy BL, Saint Martin MF)",GP,GLP
+T,Eastern and southern parts of the Caribbean,TG,Grenada,GD,GRD
+T,Eastern and southern parts of the Caribbean,TI,US (U.S. Virgin Islands),VI,VIR
+T,Eastern and southern parts of the Caribbean,TJ,US (Puerto Rico),PR,PRI
+T,Eastern and southern parts of the Caribbean,TK,Saint Kitts and Nevis,KN,KNA
+T,Eastern and southern parts of the Caribbean,TL,Saint Lucia,LC,LCA
+T,Eastern and southern parts of the Caribbean,TN,"Caribbean Netherlands, Aruba (iso: AW), Curaçao (CW), Sint Maarten (SX)",AW,ABW
+T,Eastern and southern parts of the Caribbean,TQ,UK (Anguilla),AI,AIA
+T,Eastern and southern parts of the Caribbean,TR,UK (Montserrat),MS,MSR
+T,Eastern and southern parts of the Caribbean,TT,Trinidad and Tobago,TT,TTO
+T,Eastern and southern parts of the Caribbean,TU,UK (British Virgin Islands),VG,VGB
+T,Eastern and southern parts of the Caribbean,TV,Saint Vincent and the Grenadines,VC,VCT
+T,Eastern and southern parts of the Caribbean,TX,UK (Bermuda),BM,BMU
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",U,"Russia (except UA, UB, UC, UD, UG, UK, UM and UT)",RU,RUS
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UA,Kazakhstan,KZ,KAZ
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UB,Azerbaijan,AZ,AZE
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UC,Kyrgyzstan,KG,KGZ
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UD,Armenia,AM,ARM
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UG,Georgia,GE,GEO
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UK,Ukraine,UA,UKR
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UM,Belarus and Russia (Kaliningrad Oblast),BY,BLR
+U,"Russia and post-Soviet states, excluding the Baltic states and Moldova",UT,"Tajikistan (iso2 TJ), Turkmenistan (iso2 TM), Uzbekistan (iso2 UZ)",TJ,TJK
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VA,India (West India),IN,IND
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VC,Sri Lanka,LK,LKA
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VD,Cambodia,KH,KHM
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VE,India (East India),IN,IND
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VG,Bangladesh,BD,BGD
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VH,Hong Kong,HK,HKG
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VI,India (North India),IN,IND
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VL,Laos,LA,LAO
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VM,Macau,MO,MAC
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VN,Nepal,NP,NPL
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VO,India (South India),IN,IND
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VQ,Bhutan,BT,BTN
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VR,Maldives,MV,MDV
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VT,Thailand,TH,THA
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VV,Vietnam,VN,VNM
+V,"South Asia (except Afghanistan and Pakistan), mainland Southeast Asia, Hong Kong and Macau",VY,Myanmar,MM,MMR
+W,Maritime Southeast Asia (except the Philippines),WA,"Indonesia (also WI, WQ and WR)",ID,IDN
+W,Maritime Southeast Asia (except the Philippines),WB,"Brunei, Malaysia (East Malaysia)",BN,BRN
+W,Maritime Southeast Asia (except the Philippines),WI,"Indonesia (also WA, WQ and WR)",ID,IDN
+W,Maritime Southeast Asia (except the Philippines),WM,Malaysia (Peninsular Malaysia),MY,MYS
+W,Maritime Southeast Asia (except the Philippines),WP,Timor-Leste,TL,TLS
+W,Maritime Southeast Asia (except the Philippines),WQ,"Indonesia (also WA, WI and WR)",ID,IDN
+W,Maritime Southeast Asia (except the Philippines),WR,"Indonesia (also WA, WI and WQ)",ID,IDN
+W,Maritime Southeast Asia (except the Philippines),WS,Singapore,SG,SGP
+Y,Australia,Y,"Australia (including Norfolk Island, Christmas Island, Cocos (Keeling) Islands and Australian Antarctic Territory)",AU,AUS
+Z,Mainland East Asia,Z,Mainland China (except ZK and ZM),CN,CHN
+Z,Mainland East Asia,ZK,North Korea,KP,PRK
+Z,Mainland East Asia,ZM,Mongolia,MN,MNG
