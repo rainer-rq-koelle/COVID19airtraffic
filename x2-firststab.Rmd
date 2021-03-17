@@ -1,0 +1,65 @@
+---
+title: "Untitled"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, libs, message=FALSE}
+library(tidyverse)
+library(sf)
+library(rnaturalearth)
+
+# own functions
+my_funs <- list.files(path = "./R/", pattern = "\\.R", full.names = TRUE)
+purrr::walk(my_funs, .f = source)
+
+# local data storage
+pth <- "../__DATA/OSN-COVID-ECTRL/"
+```
+
+read in data
+
+```{r, message=FALSE}
+# icao country mapping
+icao <- readr::read_csv("./data/ICAO-ISO-RQ.csv")
+
+# osn data with TW/EEZ
+ds <- fst::read_fst(path = paste0(pth, "OSN_2021_02_clean")) %>% tibble() 
+```
+
+colSums(is.na(ds))
+we have more destinations associated than origins
+
+```{r}
+adep_ades <- ds %>% filter(!is.na(origin) & !is.na(destination))
+
+# extract adep ctry and region
+adep_ades <- adep_ades %>% 
+  mutate( ADEP_CTRY = stringr::str_sub(origin, 1,2)
+         , ADEP_REG = stringr::str_sub(origin, 1,1)
+         ,ADES_CTRY = stringr::str_sub(destination, 1,2)
+         , ADES_REG = stringr::str_sub(destination, 1,1)
+         )
+
+icao_singles <- c("C","K","Y","Z")
+icao_non_russia <- c("UA","UB","UC","UD","UG","UK","UM","UT")
+
+clean_icao_ctry <- function(.ds
+                            ,.icao_singles = c("C","K","Y","Z")
+                            ,.icao_non_russia = c("UA","UB","UC","UD","UG","UK","UM","UT")
+){
+  df <- .ds %>%
+    mutate( 
+        ADEP_CTRY = case_when(
+             ADEP_REG %in% .icao_singles ~ str_sub(origin, 1,1)
+            ,ADEP_REG == "U" & !(ADEP_CTRY %in% .icao_non_russia) ~ "U" 
+            , TRUE ~ ADEP_CTRY) 
+        )
+  return(df)
+}
+
+```
+
