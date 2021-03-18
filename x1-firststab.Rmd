@@ -36,8 +36,14 @@ Opensky Network publishes on a weekly basis records of their global data (@osn_c
 These data is transferred as zipped csv files.
 Given the file size the data is read in and stored with {fst}.
 
-```{r}
-# document read zips and save out as fst
+```{}
+# local central data storage for this and other projects
+pth <- "../__DATA/OSN-COVID-ECTRL/"
+
+# create iterator of filenames
+fns <- list.files(path = pth, pattern = "^flightlist_2020.*", full.names = TRUE) 
+ds <- fns %>% 
+  purrr::map_dfr(.f=readr::read_csv)
 ```
 
 ## Data Preparation

@@ -7,7 +7,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, libs, message=FALSE}
+```{r, libs, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(sf)
 library(rnaturalearth)
@@ -27,39 +27,231 @@ read in data
 icao <- readr::read_csv("./data/ICAO-ISO-RQ.csv")
 
 # osn data with TW/EEZ
-ds <- fst::read_fst(path = paste0(pth, "OSN_2021_02_clean")) %>% tibble() 
+#ds <- fst::read_fst(path = paste0(pth, "OSN_2021_02_clean")) %>% tibble() 
+#ds <- fst::read_fst(path = paste0(pth, "OSN_2019_clean")) %>% tibble() 
+ds <- fst::read_fst(path = paste0(pth, "OSN_2020_clean")) %>% tibble() 
 ```
 
 colSums(is.na(ds))
 we have more destinations associated than origins
 
-```{r}
-adep_ades <- ds %>% filter(!is.na(origin) & !is.na(destination))
+rewritten with function
 
-# extract adep ctry and region
-adep_ades <- adep_ades %>% 
+```{r}
+# Utility functions
+
+# icao_singles <- c("C","K","Y","Z")
+# icao_non_russia <- c("UA","UB","UC","UD","UG","UK","UM","UT")
+
+icao_to_ctry_reg <- . %>%
   mutate( ADEP_CTRY = stringr::str_sub(origin, 1,2)
-         , ADEP_REG = stringr::str_sub(origin, 1,1)
-         ,ADES_CTRY = stringr::str_sub(destination, 1,2)
-         , ADES_REG = stringr::str_sub(destination, 1,1)
+         ,ADEP_REG  = stringr::str_sub(origin, 1,1)
+         ,ADES_CTRY = stringr::str_sub(destination, 1, 2)
+         ,ADES_REG  = stringr::str_sub(destination, 1, 1)
          )
 
-icao_singles <- c("C","K","Y","Z")
-icao_non_russia <- c("UA","UB","UC","UD","UG","UK","UM","UT")
-
-clean_icao_ctry <- function(.ds
-                            ,.icao_singles = c("C","K","Y","Z")
-                            ,.icao_non_russia = c("UA","UB","UC","UD","UG","UK","UM","UT")
+clean_icao_ctry <- function(
+   .ds
+  ,.icao_singles = c("C","K","Y","Z")  # single letter countries
+  ,.icao_non_russia = c("UA","UB","UC","UD","UG","UK","UM","UT") # non Russia
 ){
   df <- .ds %>%
     mutate( 
-        ADEP_CTRY = case_when(
+        ADEP_CTRY = case_when(  #------------ ADEP correction ---------------
              ADEP_REG %in% .icao_singles ~ str_sub(origin, 1,1)
             ,ADEP_REG == "U" & !(ADEP_CTRY %in% .icao_non_russia) ~ "U" 
-            , TRUE ~ ADEP_CTRY) 
-        )
+            , TRUE ~ ADEP_CTRY
+            ) 
+        
+        ,ADES_CTRY = case_when( #------------ ADES correction ---------------
+             ADES_REG %in% .icao_singles ~ str_sub(origin, 1,1)
+            ,ADES_REG == "U" & !(ADES_CTRY %in% .icao_non_russia) ~ "U" 
+            , TRUE ~ ADES_CTRY
+            )
+    ) # end mutate -------------
   return(df)
 }
+```
+
+ADEP and ADES given, i.e. origin and destination
+To-do: what to do with the wild ones 00NY, etc
+
+```{r}
+crunch_adep_ades_known <- function(.ds) {
+  tmp1 <- .ds %>% 
+    filter(!is.na(origin) & !is.na(destination))
+  
+  tmp1 <- tmp1 %>% 
+    icao_to_ctry_reg() %>% 
+    clean_icao_ctry() %>%
+    rename(ADEP = origin, ADES = destination)
+  
+  tmp1 <- tmp1 %>% 
+    group_by(day, ADEP, ADES) %>% 
+    summarise(N_DEP = n(), .groups = "drop")
+}
+
+tmp1 <- ds %>% crunch_adep_ades_known()
+```
+
+2019: 7448256
+
+ADEP known
+hist(adep_xxxx$altitude_2, breaks = 200)
+
+todo - china midland not seen by 12TW; id 84 NOS946
+
+```{r}
+# helper function establishing icao iso3 mapping
+iso3_icao_map <- function(.icao) {
+    # combine with icao countries
+    ## trim icao to a single hit (first occurrence)
+    iso3_icao <- .icao %>% 
+      filter(!is.na(ISO_3)) %>%
+      group_by(ISO_3) %>% slice(1) %>% 
+      select(ICAO_CTRY, ISO_3)
+  }
+
+crunch_adep_known <- function(.ds, .icao = icao) {
+  df <- .ds %>% filter( !is.na(origin) & is.na(destination) )
+  
+  iso3_icao <- iso3_icao_map(.icao = .icao)
+  
+  df <- df %>%
+    left_join(iso3_icao, by = c("POS2_TW" = "ISO_3") ) %>%
+    rename(POS2_ICAO2 = ICAO_CTRY ) %>%
+    left_join(iso3_icao, by = c("POS2_EEZ" = "ISO_3") ) %>%
+    rename(POS2a_ICAO2 = ICAO_CTRY ) %>%
+    mutate(ADES = case_when(
+       !is.na(POS2_ICAO2) & altitude_2 <= 8000 ~ paste0(POS2_ICAO2,"xx")
+      , is.na(POS2_ICAO2) & !is.na(POS2a_ICAO2) & altitude_2 <= 8000 ~ paste0(POS2a_ICAO2,"xx")
+      ,!is.na(POS2_ICAO2) & altitude_2 >  8000 ~ paste0(POS2_ICAO2,"hi")
+      , is.na(POS2_ICAO2) & !is.na(POS2a_ICAO2) & altitude_2 >  8000 ~ paste0(POS2a_ICAO2,"hi")
+      ,TRUE ~ "idnk"
+      )
+      )
+}
+```
+
+2021-02: 467319
+2019: 1000868
+
+```{r}
+tmp2 <- ds %>% crunch_adep_known() %>% rename(ADEP = origin) %>% 
+  group_by(day, ADEP, ADES) %>% 
+  summarise(N_DEP = n(), .groups = "drop")
+```
+
+departure unkown
+
+```{r}
+crunch_ades_known <- function(.ds, .icao = icao) {
+  df <- .ds %>% filter( is.na(origin) & !is.na(destination) )
+  
+  iso3_icao <- iso3_icao_map(.icao = .icao)
+  
+  df <- df %>%
+    left_join(iso3_icao, by = c("POS1_TW" = "ISO_3") ) %>%
+    rename(POS1_ICAO2 = ICAO_CTRY ) %>%
+    left_join(iso3_icao, by = c("POS1_EEZ" = "ISO_3") ) %>%
+    rename(POS1a_ICAO2 = ICAO_CTRY ) %>%
+    mutate(ADEP = case_when(
+       !is.na(POS1_ICAO2) & altitude_1 <= 8000 ~ paste0(POS1_ICAO2,"xx")
+      , is.na(POS1_ICAO2) & !is.na(POS1a_ICAO2) & altitude_1 <= 8000 ~ paste0(POS1a_ICAO2,"xx")
+      ,!is.na(POS1_ICAO2) & altitude_1 >  8000 ~ paste0(POS1_ICAO2,"hi")
+      , is.na(POS1_ICAO2) & !is.na(POS1a_ICAO2) & altitude_1 >  8000 ~ paste0(POS1a_ICAO2,"hi")
+      ,TRUE ~ "idnk"
+      )
+      )
+}
+```
+
+
+```{r}
+tmp3 <- ds %>% crunch_ades_known() %>% rename(ADES = destination) %>% 
+  group_by(day, ADEP, ADES) %>% 
+  summarise(N_DEP = n(), .groups = "drop")
+```
+
+2019: 1516180
+
+nothing known
+
+```{r}
+crunch_neither_known <- function(.ds, .icao = icao) {
+  df <- .ds %>% filter( is.na(origin) & is.na(destination) )
+  
+  iso3_icao <- iso3_icao_map(.icao = .icao)
+  world <- ne_countries(scale = "medium", returnclass = "sf")
+  world <- world %>% select(iso_a3)
+  
+  # --------- ADEP --------------------------------------------------------
+  rq <- df %>% 
+    pts_latlon_to_sf(latitude_1, longitude_1, FALSE) %>%
+    sf::st_join(world) %>% 
+    sf::st_drop_geometry() %>% 
+    rename(POS1_S = iso_a3) %>% 
+    select(id, POS1_S)
+  
+  df <- df %>% left_join(rq, by = "id")
+  
+  rq <- df %>% select(id, POS1_S, POS1_TW, POS1_EEZ) %>%
+    mutate(POS1_MAJ = purrr::pmap_chr(.[-1], .f =  ~calculate_mode(c(...))))
+  
+  df <- df %>% 
+    left_join(rq %>% select(id, POS1_MAJ), by = "id") %>% 
+    left_join(iso3_icao, by = c("POS1_MAJ" = "ISO_3") ) %>% 
+    mutate(ADEP = case_when(
+       !is.na(POS1_MAJ) & altitude_1 <= 8000 ~ paste0(ICAO_CTRY,"xx")
+      ,!is.na(POS1_MAJ) & altitude_1 >  8000 ~ paste0(ICAO_CTRY,"hi")
+      ,TRUE ~ "idnk"
+    ))
+  
+  # --------------- ADES -------------------------------------------------
+  
+  rq <- df %>% 
+    filter(!is.na(latitude_2) | !is.na(longitude_2)) %>%
+    pts_latlon_to_sf(latitude_2, longitude_2, FALSE) %>%
+    sf::st_join(world) %>% 
+    sf::st_drop_geometry() %>% 
+    rename(POS2_S = iso_a3) %>% 
+    select(id, POS2_S)
+  
+  df <- df %>% left_join(rq, by = "id")
+  
+  rq <- df %>% select(id, POS2_S, POS2_TW, POS2_EEZ) %>%
+    mutate(POS2_MAJ = purrr::pmap_chr(.[-1], .f =  ~calculate_mode(c(...))))
+  
+  df <- df %>% 
+    left_join(rq %>% select(id, POS2_MAJ), by = "id") %>% 
+    left_join(iso3_icao, by = c("POS2_MAJ" = "ISO_3") ) %>% 
+    mutate(ADES = case_when(
+       !is.na(POS2_MAJ) & altitude_2 <= 8000 ~ paste0(ICAO_CTRY.y,"xx")
+      ,!is.na(POS2_MAJ) & altitude_1 >  8000 ~ paste0(ICAO_CTRY.y,"hi")
+      ,TRUE ~ "idnk"
+    ))
+}
+
+
 
 ```
+
+```{r}
+tmp4 <- ds %>% crunch_neither_known() %>% 
+  group_by(day, ADEP, ADES) %>% 
+  summarise(N_DEP = n(), .groups = "drop")
+```
+
+2019: 206,792
+
+Saving results for further processing
+
+```{}
+# CHECK THAT FILE NAME IS CORRECT!!!
+
+bind_rows(tmp1, tmp2, tmp3, tmp4) %>% 
+readr::write_csv(paste0(pth, "OSN_2019_ADEP_ADES_count.csv"))
+```
+
+
 
