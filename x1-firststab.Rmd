@@ -50,8 +50,8 @@ ds <- fns %>%
 
 ```{r}
 # ds <- fst::read_fst(path = paste0(pth, "OSN_2019_fst")) %>% tibble() 
-# ds <- fst::read_fst(path = paste0(pth, "OSN_2020_fst")) %>% tibble() 
-ds <- fst::read_fst(path = paste0(pth, "OSN_2021_fst")) %>% tibble() 
+ds <- fst::read_fst(path = paste0(pth, "OSN_2020_fst")) %>% tibble() 
+# ds <- fst::read_fst(path = paste0(pth, "OSN_2021_fst")) %>% tibble() 
 
 if(!file.exists("./data/meta.csv")){ 
   meta <- list()   # initialise meta data file
@@ -94,8 +94,12 @@ rq <- ds %>% select(id, icao24, origin, destination,latitude_1, longitude_1) %>%
 # rq 2020: 5,572,449
 # rq 2021 feb 28: 848,591
 
+# perform spational join
+rq <- rq %>% sf::st_join(world)
+rq <- rq %>% rename(POS1_S = iso_a3)
+
 # perform spational join with 12NM territory
-# runs for about 9 minutes
+# runs for about 9 minutes/2019
 rq <- rq %>% 
   sf::st_join(eez_12NM)
 rq <- rq %>% rename(POS1_TW = ISO_TER1)
@@ -150,6 +154,10 @@ rq_nope <- rq %>% filter(is.na(latitude_2) | is.na(longitude_2))
 
 rq <- rq %>% filter(! id %in% rq_nope$id) %>%
   pts_latlon_to_sf(latitude_2, longitude_2, FALSE)
+
+# perform spational join
+rq <- rq %>% sf::st_join(world)
+rq <- rq %>% rename(POS2_S = iso_a3)
 
 # perform spational join with 12NM territory
 # runs for about 9 minutes
