@@ -20,16 +20,21 @@ purrr::walk(my_funs, .f = source)
 pth <- "../__DATA/OSN-COVID-ECTRL/"
 ```
 
-read in data
+read in data - should have processed before!
 
 ```{r, message=FALSE}
 # icao country mapping
 icao <- readr::read_csv("./data/ICAO-ISO-RQ.csv")
 
-# osn data with TW/EEZ
+# osn data with soil/TW/EEZ
 #ds <- fst::read_fst(path = paste0(pth, "OSN_2021_02_clean")) %>% tibble() 
 #ds <- fst::read_fst(path = paste0(pth, "OSN_2019_clean")) %>% tibble() 
-ds <- fst::read_fst(path = paste0(pth, "OSN_2020_clean")) %>% tibble() 
+#ds <- fst::read_fst(path = paste0(pth, "OSN_2020_clean")) %>% tibble() 
+fn <- list.files(path = pth, pattern = "OSN_2021_.*_clean", full.names = TRUE)
+if(length(fn) > 1) warning("!!!! more than 1 target file") else{
+  ds <- fst::read_fst(fn) %>% tibble()
+  print(meta_dataset_description(ds, "now"))
+}
 ```
 
 colSums(is.na(ds))
@@ -95,6 +100,7 @@ tmp1 <- ds %>% crunch_adep_ades_known()
 ```
 
 2019: 7448256
+2020: 7224151
 
 ADEP known
 hist(adep_xxxx$altitude_2, breaks = 200)
@@ -134,6 +140,7 @@ crunch_adep_known <- function(.ds, .icao = icao) {
 ```
 
 2021-02: 467319
+2020: 622755
 2019: 1000868
 
 ```{r}
@@ -174,6 +181,7 @@ tmp3 <- ds %>% crunch_ades_known() %>% rename(ADES = destination) %>%
 ```
 
 2019: 1516180
+2020: 1076855
 
 nothing known
 
@@ -182,18 +190,8 @@ crunch_neither_known <- function(.ds, .icao = icao) {
   df <- .ds %>% filter( is.na(origin) & is.na(destination) )
   
   iso3_icao <- iso3_icao_map(.icao = .icao)
-  world <- ne_countries(scale = "medium", returnclass = "sf")
-  world <- world %>% select(iso_a3)
   
   # --------- ADEP --------------------------------------------------------
-  rq <- df %>% 
-    pts_latlon_to_sf(latitude_1, longitude_1, FALSE) %>%
-    sf::st_join(world) %>% 
-    sf::st_drop_geometry() %>% 
-    rename(POS1_S = iso_a3) %>% 
-    select(id, POS1_S)
-  
-  df <- df %>% left_join(rq, by = "id")
   
   rq <- df %>% select(id, POS1_S, POS1_TW, POS1_EEZ) %>%
     mutate(POS1_MAJ = purrr::pmap_chr(.[-1], .f =  ~calculate_mode(c(...))))
@@ -209,16 +207,6 @@ crunch_neither_known <- function(.ds, .icao = icao) {
   
   # --------------- ADES -------------------------------------------------
   
-  rq <- df %>% 
-    filter(!is.na(latitude_2) | !is.na(longitude_2)) %>%
-    pts_latlon_to_sf(latitude_2, longitude_2, FALSE) %>%
-    sf::st_join(world) %>% 
-    sf::st_drop_geometry() %>% 
-    rename(POS2_S = iso_a3) %>% 
-    select(id, POS2_S)
-  
-  df <- df %>% left_join(rq, by = "id")
-  
   rq <- df %>% select(id, POS2_S, POS2_TW, POS2_EEZ) %>%
     mutate(POS2_MAJ = purrr::pmap_chr(.[-1], .f =  ~calculate_mode(c(...))))
   
@@ -231,10 +219,36 @@ crunch_neither_known <- function(.ds, .icao = icao) {
       ,TRUE ~ "idnk"
     ))
 }
-
-
-
 ```
+
+outsourced to cleaning step
+
+  world <- ne_countries(scale = "medium", returnclass = "sf")
+  world <- world %>% select(iso_a3)
+  
+  # --------- ADEP --------------------------------------------------------
+  rq <- df %>% 
+    pts_latlon_to_sf(latitude_1, longitude_1, FALSE) %>%
+    sf::st_join(world) %>% 
+    sf::st_drop_geometry() %>% 
+    rename(POS1_S = iso_a3) %>% 
+    select(id, POS1_S)
+  
+  df <- df %>% left_join(rq, by = "id")
+  
+  # --------------- ADES -------------------------------------------------
+  rq <- df %>% 
+    filter(!is.na(latitude_2) | !is.na(longitude_2)) %>%
+    pts_latlon_to_sf(latitude_2, longitude_2, FALSE) %>%
+    sf::st_join(world) %>% 
+    sf::st_drop_geometry() %>% 
+    rename(POS2_S = iso_a3) %>% 
+    select(id, POS2_S)
+  
+  df <- df %>% left_join(rq, by = "id")
+  
+  
+
 
 ```{r}
 tmp4 <- ds %>% crunch_neither_known() %>% 
@@ -243,6 +257,7 @@ tmp4 <- ds %>% crunch_neither_known() %>%
 ```
 
 2019: 206,792
+2020: 100,952
 
 Saving results for further processing
 
@@ -250,7 +265,7 @@ Saving results for further processing
 # CHECK THAT FILE NAME IS CORRECT!!!
 
 bind_rows(tmp1, tmp2, tmp3, tmp4) %>% 
-readr::write_csv(paste0(pth, "OSN_2019_ADEP_ADES_count.csv"))
+readr::write_csv(paste0(pth, "OSN_2020_ADEP_ADES_count.csv"))
 ```
 
 

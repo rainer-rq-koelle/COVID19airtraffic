@@ -41,28 +41,36 @@ Given the file size the data is read in and stored with {fst}.
 pth <- "../__DATA/OSN-COVID-ECTRL/"
 
 # create iterator of filenames
-fns <- list.files(path = pth, pattern = "^flightlist_2020.*", full.names = TRUE) 
+fns <- list.files(path = pth, pattern = "^flightlist_2021.*", full.names = TRUE) 
 ds <- fns %>% 
   purrr::map_dfr(.f=readr::read_csv)
 ```
+
+After the refactoring, the source data fst files are augmented with position 
+references for lat/lon positions without ADEP/ADES association.
+The augmented files are stored as xxx_clean fst.
 
 ## Data Preparation
 
 ```{r}
 # ds <- fst::read_fst(path = paste0(pth, "OSN_2019_fst")) %>% tibble() 
-ds <- fst::read_fst(path = paste0(pth, "OSN_2020_fst")) %>% tibble() 
+# ds <- fst::read_fst(path = paste0(pth, "OSN_2020_fst")) %>% tibble() 
 # ds <- fst::read_fst(path = paste0(pth, "OSN_2021_fst")) %>% tibble() 
 
-if(!file.exists("./data/meta.csv")){ 
-  meta <- list()   # initialise meta data file
-  meta$OSN_2019 <- meta_dataset_description(ds, 2019)
-}else{
-    meta <- readr::read_csv("./data/meta.csv")
-    next_meta <- meta_dataset_description(ds, 2021)
-    # todo: if year exists, update, else add new line
-    meta <- meta %>% bind_rows(next_meta)
-}
-meta <- meta %>% purrr::map_dfr(.f = bind_rows)
+# first setup of a meta file 
+# meta <- list()   # initialise meta data file
+# meta$OSN_2019 <- meta_dataset_description(ds, 2019)
+# write-out: eadr::write_csv(x = meta, file="./data/meta.csv")
+
+# read and update meta
+meta      <- readr::read_csv("./data/meta.csv")
+next_meta <- meta_dataset_description(ds, 2021)
+
+# replace current year line with updated meta
+# antijoin kills current year, bind-rows add new values (prob a better solution)
+meta <- meta %>% anti_join(next_meta, by = "YEAR") %>% bind_rows(next_meta)
+
+# write out update meta file
 readr::write_csv(x = meta, file="./data/meta.csv")
 ```
 
@@ -94,7 +102,7 @@ rq <- ds %>% select(id, icao24, origin, destination,latitude_1, longitude_1) %>%
 # rq 2020: 5,572,449
 # rq 2021 feb 28: 848,591
 
-# perform spational join
+# perform spational join - soil
 rq <- rq %>% sf::st_join(world)
 rq <- rq %>% rename(POS1_S = iso_a3)
 
@@ -119,12 +127,6 @@ rq <- rq %>% rename(POS1_EEZ = ISO_TER1)
 # remove doubles ---------------------- check todo
 # another costly operation! about 10 mins
 rq <- rq %>% group_by(id) %>% slice(1) %>% ungroup()
-
-
-# 200NM EEZ did not deliver more results --------------------------------------
-# rq2 <- rq %>% filter(is.na(POS1_TW))
-# rq2 <- rq2 %>% sf::st_join(eez_land)
-# does not deliver any additional mapping, column left blank due to size! -----
 ```
 
 rq %>% sf::st_set_geometry(NULL) %>% readr::write_csv("ds_origin_clean.csv")
@@ -137,7 +139,7 @@ rq %>% sf::st_set_geometry(NULL) %>% readr::write_csv("ds_origin_clean.csv")
 # trim rq for join
 rq <- rq %>% sf::st_drop_geometry()
 # add POS1_TW and EEZ to ds
-ds <- ds %>% left_join(rq %>% select(id, POS1_TW, POS1_EEZ), by = "id")
+ds <- ds %>% left_join(rq %>% select(id, POS1_S, POS1_TW, POS1_EEZ), by = "id")
 ```
 
 tackle arrival side
@@ -181,16 +183,17 @@ rq <- rq %>% group_by(id) %>% slice(1) %>% ungroup()
 rq <- rq %>% sf::st_drop_geometry()
 
 # combine with data ds
-# ds <- ds %>% left_join(rq %>% select(id, POS2_TW, POS2_EEZ), by = "id")
+# ds <- ds %>% left_join(rq %>% select(id, POS2_S, POS2_TW, POS2_EEZ), by = "id")
 ```
 
 ds <- ds %>% left_join(rq %>% select(id, POS2_TW, POS2_EEZ), by = "id")
 sf drop geometry
-ds <- ds %>% mutate(day = as.character(day)) 
-ds <- ds %>% mutate(lastseen = as.character(lastseen)) 
-ds <- ds %>% mutate(firstseen = as.character(firstseen)) 
 
-fst::write_fst(ds, path = paste0(pth, "OSN_2021_02_clean"))
+
+when you break down into quarters, months, etc. make sure that the ids are newly assigned in the annual file!
+ds %>% 
+  for_fst_coerce_date_to_character() %>%
+  fst::write_fst(ds, path = paste0(pth, "OSN_2021_03_clean"))
 
 ## Appendix
 

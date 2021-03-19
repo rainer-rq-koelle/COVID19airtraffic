@@ -25,3 +25,8 @@ work, if things fail or are switched off :)
 The OSN data set for 2019 is about 7 mio flights without id for lat/lon.
 That runs for days ...
 }
+\examples{
+\dontrun{
+ calc_nngeo_and_save(sf_pts, world, "DEP")
+ }
+}

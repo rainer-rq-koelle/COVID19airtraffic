@@ -16,7 +16,7 @@
 #'
 #' @examples
 #' \dontrun{
-#'  calc_nngeo_and_save(sf_pts, world, "DEP)
+#'  calc_nngeo_and_save(sf_pts, world, "DEP")
 #'  }
 calc_nngeo_and_save<-function(.sf_pts, .poly, .prefix, .pth = pth, ...){
   # my variables
