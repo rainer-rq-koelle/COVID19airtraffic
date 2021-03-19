@@ -1,0 +1,36 @@
+---
+title: "Global Traffic Situation"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+```{r}
+# local data storage
+pth <- "../__DATA/OSN-COVID-ECTRL/"
+
+# airport iso-icao
+apt_ctry_reg <- readr::read_csv("../__DATA/airport_iso_icao.csv") %>%
+  rename(ICAO = ident)
+
+# list and load payload data files
+fns <- list.files(path = pth, pattern = "OSN_.*ADEP_ADES_count.csv", full.names = TRUE)
+ds  <- fns %>% purrr::map_dfr(.f = readr::read_csv)
+```
+
+rq %>% filter(is.na(ICAO_REG)) %>% group_by(ADEP) %>% count() %>% arrange(desc(n)) %>% mutate(CTRY = stringr::str_sub(ADEP, 1, 2))
+
+ds <- ds %>% 
+  left_join(
+     apt_ctry_reg %>% select(ADEP = ICAO, ICAO_REG, ICAO_CTRY, iso_region)
+    ,by = "ADEP"
+    )
+# correct for Alaska ... check for other 
+ds <- ds %>% rename(ADEP_REG = ICAO_REG, ADEP_CTRY = ICAO_CTRY, ADEP_ISO_REG = iso_region)
+
+
