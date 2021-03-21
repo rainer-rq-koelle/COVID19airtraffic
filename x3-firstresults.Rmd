@@ -8,29 +8,102 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 ```{r, message=FALSE, warning=FALSE}
 library(tidyverse)
+source("./R/left_join_replace.R")
+source('~/RProjects/COVID19airtraffic/R/clean_icao_to_ctry_reg.R')
 ```
 
-```{r}
+```{r, message=FALSE}
 # local data storage
 pth <- "../__DATA/OSN-COVID-ECTRL/"
-
-# airport iso-icao
-apt_ctry_reg <- readr::read_csv("../__DATA/airport_iso_icao.csv") %>%
-  rename(ICAO = ident)
 
 # list and load payload data files
 fns <- list.files(path = pth, pattern = "OSN_.*ADEP_ADES_count.csv", full.names = TRUE)
 ds  <- fns %>% purrr::map_dfr(.f = readr::read_csv)
 ```
 
-rq %>% filter(is.na(ICAO_REG)) %>% group_by(ADEP) %>% count() %>% arrange(desc(n)) %>% mutate(CTRY = stringr::str_sub(ADEP, 1, 2))
+```{r aptmapping}
+# airport iso-icao
+apt_ctry_reg <- readr::read_csv("../__DATA/airport_iso_icao.csv") %>%
+  rename(ICAO = ident)
 
-ds <- ds %>% 
-  left_join(
-     apt_ctry_reg %>% select(ADEP = ICAO, ICAO_REG, ICAO_CTRY, iso_region)
-    ,by = "ADEP"
-    )
-# correct for Alaska ... check for other 
-ds <- ds %>% rename(ADEP_REG = ICAO_REG, ADEP_CTRY = ICAO_CTRY, ADEP_ISO_REG = iso_region)
+fix_missing <- tribble(
+  ~ICAO, ~name, ~iso_country, ~iso_region, ~ICAO_REG, ~ICAO_CTRY
+  ,"2ME3","Heartstone Farm", "US", "US-ME", "K", "K"
+  ,"74XA", "Gun Barrel City Airpark", "US","US-TX","K", "K"
+  ,"CLA5", "Lethbridge / Anderson Field", "CA", "CA-AB", "C", "C"
+  ,"CLV2", "Stayner (Clearview Field) Airport", "CA", "CA-ON", "C", "C"     # https://www.unipage.net/en/airport/clv2
+  ,"CFW2", "Walter's Falls (Piper Way) Airfield", "CA", "CA-ON", "C", "C"   # https://www.unipage.net/en/airport/cwf2
+  ,"CSV8", "Schomberg (Sloan Valley View Farm Airfield)", "CA", "CA-ON", "C", "C" # unipage
+  ,"CLJ3", "Lethbridge / J3 Airfield", "CA", "CA-AB", "C", "C"              # unipage
+  ,"CGV5","Grand Valley (Black Field)", "CA", "CA-ON", "C", "C"             # unipage
+)
+
+apt_ctry_reg <- dplyr::bind_rows(apt_ctry_reg, fix_missing)
+```
+
+Map known but non-standard airport location indicators (c.f. ourairports.com) to ICAO_REG and ICAO_CTRY.
 
 
+```{r}
+# lookup table
+fix_icao_by_iso_reg <- tribble(
+   ~REG, ~CTRY, ~ISO_REG
+  ,"P" , "PA", "US-AK"     # Alaska (US, non-CONUS)
+  ,"P" , "PH", "US-HI"     # Hawaii (US, non-CONUS)
+)
+
+append_icao_reg_ctry <- function(.ds, .icao_lookup = apt_ctry_reg){
+  # append departure side
+  lookup <- .icao_lookup %>% select(ADEP = ICAO, ICAO_REG, ICAO_CTRY, iso_region)
+  df <- .ds %>%
+    left_join(lookup, by = "ADEP") %>%
+    rename(ADEP_REG = ICAO_REG, ADEP_CTRY = ICAO_CTRY, ADEP_ISO_REG = iso_region)
+  
+  # append departure side
+  lookup <- .icao_lookup %>% select(ADES = ICAO, ICAO_REG, ICAO_CTRY, iso_region)
+  df <- df %>% 
+  left_join(lookup, by = "ADES") %>% 
+  rename(ADES_REG = ICAO_REG, ADES_CTRY = ICAO_CTRY, ADES_ISO_REG = iso_region)
+
+  return(df)
+}
+
+extract_icao_reg_ctry <- function(.ds){
+  # departure side
+  ok  <- .ds %>% filter(!is.na( ADEP_CTRY))
+  nok <- .ds %>% filter( is.na(ADEP_CTRY))
+  
+  nok <- nok %>% icao_to_ctry_reg(.origin = ADEP, .destination = ADES)
+}
+
+extract_patch <- function(.ds){
+  df <- .ds %>% mutate(
+    ADEP_CTRY = case_when( 
+      str_detect(str_extract(ADEP, "..$"), "xx") ~ str_replace(ADEP, "xx", "")
+      ,TRUE ~ ADEP_CTRY)
+    ,ADEP_REG = case_when( 
+      str_detect(str_extract(ADEP, "..$"), "xx") ~ str_sub(ADEP_CTRY, 1, 1)
+    , TRUE ~ ADEP_REG)
+  ) %>%
+    # destination side -----------------------------------
+    mutate(
+    ADES_CTRY = case_when( 
+      str_detect(str_extract(ADES, "..$"), "xx") ~ str_replace(ADES, "xx", "")
+      ,TRUE ~ ADES_CTRY)
+    ,ADES_REG = case_when( 
+      str_detect(str_extract(ADES, "..$"), "xx") ~ str_sub(ADES_CTRY, 1, 1)
+    , TRUE ~ ADES_REG)
+  )
+}
+```
+
+```{r}
+# append with all known location identifiers (ICAO and ident)
+rq <- ds %>% append_icao_reg_ctry() %>% extract_patch()
+```
+
+EG32, LSZM and friends not yet handled
+remaining NAs is hi ... think about adding to above with add_on?
+
+# append arrival side
+  

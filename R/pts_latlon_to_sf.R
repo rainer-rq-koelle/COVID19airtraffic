@@ -8,7 +8,7 @@
 #' @export
 #'
 #' @examples
-#' \donotrun{
+#' \dontrun{
 #' pts_latlon_to_sf(my_pts_tibble, lat, lon)
 #' }
 pts_latlon_to_sf <- function(.ds, .lat_var, .lon_var, .remove = TRUE){
